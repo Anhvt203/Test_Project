@@ -2,24 +2,51 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random=UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
-    public int speed = 1;
+    private int speed = 1;
     public GameObject start;
     public GameObject end;
-
-
-
+    public GameObject[] path;
+    private int step = 0;
+    private bool isRunning = true;
     // Start is called before the first frame update
     void Start()
     {
+        StartCoroutine(stopPerSecond());
     }
 
+    IEnumerator stopPerSecond()
+    {
+        yield return new WaitForSeconds(Random.Range(1f,2f));
+        speed = 1 - speed;
+        isRunning = true;
+        //StartCoroutine(stopPerSecond());
+    }
     // Update is called once per frame
     void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position, end.transform.position, 0.01f);
+        transform.position = Vector3.MoveTowards(transform.position, path[step].transform.position, 0.01f * speed);
+        if(transform.position == path[step].transform.position && isRunning)
+        {
+            isRunning = false;
+            step = Random.Range(0, 5);
+            
+            StartCoroutine(stopPerSecond());
+        }
+        //chay tự động điểm 1 đến 5
+        // if (transform.position == path[step].transform.position)
+        // {
+        //         // step++;
+        // if (step == 5)
+        // {
+        //     gameObject.transform.position = start.transform.position;
+        //     step = 0;
+        // } 
+        //}
+
         //di chuyen
         // if (Input.GetKey("w"))
         // {
