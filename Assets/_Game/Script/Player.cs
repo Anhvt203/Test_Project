@@ -1,40 +1,40 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using Random=UnityEngine.Random;
 
 public class Player : MonoBehaviour
 {
     private int speed = 1;
-    public GameObject start;
-    public GameObject end;
-    public GameObject[] path;
-    private int step = 0;
-    private bool isRunning = true;
-    // Start is called before the first frame update
-    void Start()
-    {
-        StartCoroutine(stopPerSecond());
-    }
 
-    IEnumerator stopPerSecond()
-    {
-        yield return new WaitForSeconds(Random.Range(1f,2f));
-        speed = 1 - speed;
-        isRunning = true;
-        //StartCoroutine(stopPerSecond());
-    }
+    private GameObject[] path;
+    private GameObject gameController;
+    private int step = 0;
+    // Start is called before the first frame update
+    void Start(){
+        // StartCoroutine(stopPerSecond());
+        gameController = GameObject.FindGameObjectWithTag("GameController");
+        path = gameController.GetComponent<GameController>().returnPath();
+    // IEnumerator stopPerSecond()
+    // {
+    //     yield return new WaitForSeconds(Random.Range(1f,2f));
+    //     speed = 1 - speed;
+    //     isRunning = true;
+    //     //StartCoroutine(stopPerSecond());
+    // }
     // Update is called once per frame
+    }
     void Update()
     {
         transform.position = Vector3.MoveTowards(transform.position, path[step].transform.position, 0.01f * speed);
-        if(transform.position == path[step].transform.position && isRunning)
+        if(transform.position == path[step].transform.position)
         {
-            isRunning = false;
-            step = Random.Range(0, 5);
-            
-            StartCoroutine(stopPerSecond());
+            if (step == 5)
+            {
+                gameObject.SetActive(false);
+            } 
         }
         //chay tự động điểm 1 đến 5
         // if (transform.position == path[step].transform.position)
@@ -80,18 +80,16 @@ public class Player : MonoBehaviour
     // }
     void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.gameObject.tag == "End")
+        if (col.gameObject.tag == "Bullet")
         {
-            gameObject.transform.position = start.transform.position;
+            gameObject.SetActive(true);
         }
     }
     void OnTriggerStay2D(Collider2D col)
     {
-
     }
     void OnTriggerExit2D(Collider2D col) 
     {
-
     }
 }
 
